@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>Racoon</artifactId>
+        <groupId>com.skplanet.racoon</groupId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>DataGenerator</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <distributionManagement>
+        <repository>
+            <id>skp-releases</id>
+            <name>skp-releases</name>
+            <url>http://mvn.skplanet.com/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>skp-snapshots</id>
+            <name>skp-snapshots</name>
+            <url>http://mvn.skplanet.com/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>skp-public</id>
+            <name>skplanet public repository</name>
+            <url>http://mvn.skplanet.com/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>skp-public</id>
+            <name>skp public repository</name>
+            <url>http://mvn.skplanet.com/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>

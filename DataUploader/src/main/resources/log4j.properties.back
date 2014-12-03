@@ -1,0 +1,33 @@
+datauploader.root.logger=INFO,DRFA,RFA,console
+datauploader.log.dir=./logs
+datauploader.log.file=datauploader.log
+datauploader.warn.log.file=warn.datauploader.log
+log4j.rootLogger=${querycache.root.logger}
+log4j.threshold=ALL
+log4j.appender.NullAppender=org.apache.log4j.varia.NullAppender
+datauploader.log.maxfilesize=256MB
+datauploader.log.maxbackupindex=20
+
+#
+# Daily Rolling File Appender
+#
+log4j.appender.DRFA=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.DRFA.File=${datauploader.log.dir}/${datauploader.log.file}
+log4j.appender.DRFA.DatePattern=.yyyy-MM-dd
+log4j.appender.DRFA.layout=org.apache.log4j.PatternLayout
+log4j.appender.DRFA.layout.ConversionPattern=%d{ISO8601} %p %c: %m%n
+
+# WARN
+log4j.appender.RFA=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.RFA.File=${datauploader.log.dir}/${datauploader.warn.log.file}
+log4j.appender.RFA.DatePattern=.yyyy-MM-dd
+log4j.appender.RFA.layout=org.apache.log4j.PatternLayout
+log4j.appender.RFA.layout.ConverdsionPattern=%d{ISO8601} %p %c: %m%n
+log4j.appender.RFA.Threshold=WARN
+
+# Console
+log4j.appender.console=org.apache.log4j.ConsoleAppender
+log4j.appender.console.target=System.err
+log4j.appender.console.layout=org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{2}: %m%n
+
