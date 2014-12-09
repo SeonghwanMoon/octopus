@@ -7,22 +7,44 @@
         <groupId>com.skplanet.racoon</groupId>
         <version>0.1.0-SNAPSHOT</version>
     </parent>
-    <groupId>com.skplanet.racoon</groupId>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>DataUploader</artifactId>
     <version>0.1.1-SNAPSHOT</version>
 
+    <!--<properties>-->
+    <!--<hadoop.version>2.4.0</hadoop.version>-->
+    <!--<hbase.version>0.98.3-hadoop2</hbase.version>-->
+    <!--<phoenix.version>4.1.0-SNAPSHOT</phoenix.version>-->
+    <!--</properties>-->
+
+    <!--<profiles>-->
+    <!--<profile>-->
+    <!--<id>ssa</id>-->
+    <!--<properties>-->
+    <!--<hadoop.version>2.3.0-cdh5.0.1</hadoop.version>-->
+    <!--<hbase.version>0.98.3-hadoop2</hbase.version>-->
+    <!--<phoenix.version>4.1.0-SNAPSHOT</phoenix.version>-->
+    <!--</properties>-->
+    <!--</profile>-->
+    <!--<profile>-->
+    <!--<id>local</id>-->
+    <!--<properties>-->
+    <!--<hadoop.version>2.4.0</hadoop.version>-->
+    <!--<hbase.version>0.98.5-hadoop2</hbase.version>-->
+    <!--<phoenix.version>5.0.0-SNAPSHOT</phoenix.version>-->
+    <!--</properties>-->
+    <!--</profile>-->
+    <!--<profile>-->
+    <!--<id>testCluster</id>-->
+    <!--<properties>-->
+    <!--<hadoop.version>2.4.0</hadoop.version>-->
+    <!--<hbase.version>0.98.3-hadoop2</hbase.version>-->
+    <!--<phoenix.version>4.1.0-SNAPSHOT</phoenix.version>-->
+    <!--</properties>-->
+    <!--</profile>-->
+    <!--</profiles>-->
+
     <build>
-        <resources>
-            <!--<resource>-->
-            <!--&lt;!&ndash;<description> location for hdfs-site.xml and core-site xml, if uquerysing hdfs file load</description>&ndash;&gt;-->
-            <!--<directory>${pom.basedir}/location for hdfs-site.xml and </directory>-->
-            <!--<includes>-->
-            <!--<include>hdfs-site.xml</include>-->
-            <!--<include>core-site.xml</include>-->
-            <!--</includes>-->
-            <!--</resource>-->
-        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -32,18 +54,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-            <!--<plugin>-->
-                <!--<groupId>org.apache.maven.plugins</groupId>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<version>2.4</version>-->
-                <!--<configuration>-->
-                    <!--<archive>-->
-                        <!--<manifest>-->
-                            <!--<mainClass>PhoenixUpdater</mainClass>-->
-                        <!--</manifest>-->
-                    <!--</archive>-->
-                <!--</configuration>-->
-            <!--</plugin>-->
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.4</version>
@@ -70,12 +80,10 @@
             </plugin>
         </plugins>
     </build>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.phoenix</groupId>
             <artifactId>phoenix-core</artifactId>
-            <version>4.1.0-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.hadoop</groupId>
@@ -86,62 +94,51 @@
         <dependency>
             <groupId>org.apache.phoenix</groupId>
             <artifactId>phoenix-hadoop2-compat</artifactId>
-            <version>4.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.phoenix</groupId>
             <artifactId>phoenix-hadoop-compat</artifactId>
-            <version>4.1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-hadoop2-compat</artifactId>
-            <version>0.98.3-hadoop2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-common</artifactId>
-            <version>0.98.3-hadoop2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-client</artifactId>
-            <version>0.98.3-hadoop2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase-server</artifactId>
-            <version>0.98.3-hadoop2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-hdfs</artifactId>
-            <version>2.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-common</artifactId>
-            <version>2.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-auth</artifactId>
-            <version>2.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-client</artifactId>
-            <version>2.4.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
         </dependency>
 
         <!--<dependency>-->
@@ -156,5 +153,4 @@
         <!--</exclusions>-->
         <!--</dependency>-->
     </dependencies>
-
 </project>
