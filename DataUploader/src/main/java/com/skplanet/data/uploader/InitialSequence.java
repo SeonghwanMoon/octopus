@@ -37,7 +37,7 @@ public class InitialSequence {
     public String[] sTableArray = new String[2];
     public FileSystem fs = null;
     public Configuration conf = null;
-
+    public boolean bStopByError = false;
 
     enum Type {
         INTEGER,
@@ -93,6 +93,8 @@ public class InitialSequence {
             sTableArray[1] = prop.getProperty("Table") + "2";
             stk = new StringTokenizer(prop.getProperty("Type"), ",");
             sType = new Type[stk.countTokens()];
+            bStopByError = Boolean.parseBoolean(prop.getProperty("ExitByError"));
+
             while (stk.hasMoreTokens()) {
                 temp = stk.nextToken();
                 sType[cnt] = Type.valueOf(temp);

@@ -38,17 +38,21 @@ public class ViewOp {
         return conn;
     }
 
-    public void rollBackView(){
+    public void rollBackView() {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         try {
             conn = getConnection();
-            pstmt = conn.prepareStatement("drop table "+vTable );
+            pstmt = conn.prepareStatement("select * from  " + vTable + " limit 1");
+            rs = pstmt.executeQuery();
+
+            pstmt = conn.prepareStatement("drop table " + vTable);
             pstmt.executeUpdate();
+
         } catch (SQLException e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         } finally {
             try {
                 if (pstmt != null)
@@ -56,7 +60,7 @@ public class ViewOp {
                 if (conn != null)
                     conn.close();
             } catch (SQLException e) {
-                logger.error(e);
+                logger.error(e.getMessage());
             }
         }
     }
@@ -70,7 +74,7 @@ public class ViewOp {
             conn = getConnection();
             File file = null;
             if (is.sTable.equals("istore.userinfo")) {
-                pstmt = conn.prepareStatement("select count(1) from " + is.sTableArray[0]);
+                pstmt = conn.prepareStatement("select * from " + is.sTableArray[0] + " limit 1");
                 try {
                     rs = pstmt.executeQuery();
                     rs.next();
@@ -96,7 +100,7 @@ public class ViewOp {
                     is.uTable = vTable;
                 }
             } else {
-                pstmt = conn.prepareStatement("select count(1) from " + is.sTableArray[0]);
+                pstmt = conn.prepareStatement("select * from " + is.sTableArray[0] + " limit 1");
                 logger.info(pstmt);
                 try {
                     rs = pstmt.executeQuery();
@@ -123,7 +127,7 @@ public class ViewOp {
                 }
             }
         } catch (SQLException e) {
-            logger.error(e);
+            logger.error(e.getMessage());
         } finally {
             try {
                 if (pstmt != null)
@@ -148,16 +152,16 @@ public class ViewOp {
             pstmt = conn.prepareStatement("drop view " + is.sTable);
             try {
                 ret = pstmt.executeUpdate();
-                logger.info("View :"+eTable+" deleted");
+                logger.info("View :" + eTable + " deleted");
             } catch (SQLException e) {
                 logger.error(e.getMessage());
             }
 
             pstmt = conn.prepareStatement(
-                            "create view " + is.sTable + " as select * from " + vTable);
+                    "create view " + is.sTable + " as select * from " + vTable);
             try {
                 pstmt.executeUpdate();
-                logger.info("Table :"+vTable+" created ");
+                logger.info("Table :" + vTable + " created ");
             } catch (SQLException e) {
                 logger.error(e.getMessage());
             }
@@ -165,7 +169,7 @@ public class ViewOp {
             pstmt = conn.prepareStatement("drop table " + eTable);
             try {
                 ret = pstmt.executeUpdate();
-                logger.info("Table :"+eTable+" deleted");
+                logger.info("Table :" + eTable + " deleted");
             } catch (SQLException e) {
                 logger.error(e.getMessage());
             }
