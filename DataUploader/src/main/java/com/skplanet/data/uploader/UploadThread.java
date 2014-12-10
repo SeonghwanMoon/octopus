@@ -12,7 +12,6 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.StringTokenizer;
@@ -147,7 +146,12 @@ public class UploadThread implements Callable<int[]> {
         Connection conn = null;
         PreparedStatement pstmt = null;
         int[] readLine = new int[2];
+        FileInputStream f = null;
+        FileChannel fc = null;
+        MappedByteBuffer mb = null;
+        BufferedReader br = null;
         logger.info("UploadFromLocal");
+
         try {
             conn = getConnection();
             conn.setAutoCommit(false);
@@ -156,11 +160,10 @@ public class UploadThread implements Callable<int[]> {
             pstmt = conn.prepareStatement(is.sQuery1 + " " + is.uTable + " " + is.sQuery2);
 
             while ((file = (File) is.clq.poll()) != null) {
-                file = (File) is.clq.poll();
 
-                FileInputStream f = new FileInputStream(file);
-                FileChannel fc = f.getChannel();
-                MappedByteBuffer mb = fc.map(FileChannel.MapMode.READ_ONLY, 0l, fc.size());
+                f = new FileInputStream(file);
+                fc = f.getChannel();
+                mb = fc.map(FileChannel.MapMode.READ_ONLY, 0l, fc.size());
 
                 logger.info("File channel sizes : " + fc.size());
                 long start = System.currentTimeMillis();
@@ -168,11 +171,9 @@ public class UploadThread implements Callable<int[]> {
                 byte[] buffer = new byte[(int) fc.size()];
                 mb.get(buffer);
                 f.close();
-                BufferedReader
-                        in =
-                        new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buffer)));
+                br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(buffer)));
 
-                for (String line = in.readLine(); line != null; line = in.readLine()) {
+                for (String line = br.readLine(); line != null; line = br.readLine()) {
                     try {
                         pstmt = codeGen(pstmt, is.sType, line);
                         pstmt.executeUpdate();
@@ -180,33 +181,37 @@ public class UploadThread implements Callable<int[]> {
                             conn.commit();
                         readLine[0]++;
                     } catch (Exception e) {
-                        logger.error(e.getMessage());
+                        if (is.bStopByError)
+                            throw new Exception(e);
+                        else {
+                            readLine[1]++;
+                            continue;
+                        }
                     }
                 }
-                System.out.println("rows:" + readLine[0]);
-
-                f.close();
-                in.close();
+                conn.commit();
+                logger.info("rows:" + readLine[0]);
+                if (br!=null)
+                    br.close();
                 fc.close();
-
-                return readLine;
             }
+            if(pstmt!=null)
+                pstmt.close();
+            conn.close();
+            if (readLine[0] == 0 )
+                throw new Exception("Empty Rows. Please check the file");
+            return readLine;
         } catch (Exception e) {
-            readLine[0] = -1;
+            if (br != null)
+                br.close();
+            if(conn!=null)
+                conn.commit();
+            if(pstmt != null)
+                pstmt.close();
+            conn.close();
             e.printStackTrace();
             logger.error(e.getMessage());
             throw new Exception(e);
-        } finally {
-            try {
-                if (conn != null)
-                    conn.commit();
-                if (pstmt != null)
-                    pstmt.close();
-                conn.close();
-            } catch (SQLException e) {
-                logger.error(e.getMessage());
-            }
-            return readLine;
         }
     }
 
@@ -239,9 +244,6 @@ public class UploadThread implements Callable<int[]> {
                             conn.commit();
                         readLine[0]++;
                     } catch (Exception e) {
-//                        pstmt =
-//                                conn.prepareStatement(
-//                                        is.sQuery1 + " " + is.uTable + " " + is.sQuery2);
                         if (is.bStopByError) {
                             throw new Exception(e);
                         } else {
@@ -259,6 +261,9 @@ public class UploadThread implements Callable<int[]> {
             if (pstmt != null)
                 pstmt.close();
             conn.close();
+            if (readLine[0] == 0 )
+                throw new Exception("Empty Rows. Please check the file");
+
             return readLine;
         } catch (Exception e) {
             try {
@@ -277,22 +282,6 @@ public class UploadThread implements Callable<int[]> {
             logger.error(e.getMessage());
             throw new Exception(e);
         }
-        //        finally {
-        //            try {
-        //                if (br != null)
-        //                    br.close();
-        //                if (conn != null)
-        //                    conn.commit();
-        //                if (pstmt != null)
-        //                    pstmt.close();
-        //                conn.close();
-        //            } catch (IOException e) {
-        //                logger.error(e.getMessage());
-        //            } catch (SQLException e) {
-        //                logger.error(e.getMessage());
-        //            }
-        //            return readLine;
-        //        }
     }
 
     @Override public int[] call() throws Exception {

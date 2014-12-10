@@ -34,23 +34,18 @@ public class ViewManager {
         ViewOp vo = new ViewOp(is);
         vo.createView();
 
-
         try {
             is.loadFile();
             executor = Executors.newFixedThreadPool(is.nNumOfThread);
-
             Callable<int[]> callable = new UploadThread(is);
-
             for (int i = 0; i < is.nNumOfThread; i++) {
                 Future<int[]> future = executor.submit(callable);
                 list.add(future);
             }
-
             for (Future<int[]> temp : list) {
                 totalWriteLine[0] += temp.get()[0];
                 totalWriteLine[1] += temp.get()[1];
             }
-
             vo.deleteView();
         } catch (Exception e) {
             executor.shutdown();
@@ -59,7 +54,8 @@ public class ViewManager {
         }
         finally {
             try {
-                is.fs.close();
+                if(is.bHdfs)
+                    is.fs.close();
                 logger.info("Total Elapsed time: " + (System.currentTimeMillis() - start));
             } catch (Exception e) {
                 e.printStackTrace();

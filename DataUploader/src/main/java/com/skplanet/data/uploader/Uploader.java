@@ -57,12 +57,6 @@ public class Uploader {
             System.exit(1);
         }
 
-
-
-
-
-
-
         try {
             is.fs.close();
             up.logger.info("Total Elapsed time: " + (System.currentTimeMillis() - start));

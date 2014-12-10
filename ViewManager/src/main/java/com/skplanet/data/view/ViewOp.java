@@ -127,6 +127,7 @@ public class ViewOp {
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             logger.error(e.getMessage());
         } finally {
             try {

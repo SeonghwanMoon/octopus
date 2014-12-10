@@ -20,7 +20,7 @@ public class InitialSequence {
     //    String sServerAddress = null;
     public int nNumOfThread = 0;
     String sLocation = null;
-    boolean bHdfs = false;
+    public boolean bHdfs = false;
     String sHdfsConf = null;
     String sHdfsUrl = null;
     String sDriver = null;
@@ -135,6 +135,8 @@ public class InitialSequence {
                     clq.add(temp);
                 }
             }
+            System.out.println("Queue Size : " + clq.size());
+
         } catch (Exception e) {
             logger.error(e.getMessage());
             logger.error("Sequence: File loading.  Check location of file");
