@@ -89,6 +89,7 @@ public class InitialSequence {
             sQuery1 = prop.getProperty("Query1");
             sQuery2 = prop.getProperty("Query2");
             sTable = prop.getProperty("Table");
+            uTable = prop.getProperty("Table");
             sTableArray[0] = prop.getProperty("Table") + "1";
             sTableArray[1] = prop.getProperty("Table") + "2";
             stk = new StringTokenizer(prop.getProperty("Type"), ",");

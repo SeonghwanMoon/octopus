@@ -86,6 +86,11 @@ public class ViewOp {
                             conn.prepareStatement("create table " + is.sTableArray[1]
                                     + " (userinfo varchar (100) not null,name varchar(200) , type integer not null, ci varchar(88) not null, last_auth_dt varchar(14) constraint pk primary key (userinfo, type, ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE ");
                     pstmt.executeUpdate();
+
+                    pstmt =
+                            conn.prepareStatement("create index ci_idx on "+is.sTableArray[1]+"(ci,type) include (name,userinfo) ");
+                    pstmt.executeUpdate();
+
                     eTable = is.sTableArray[0];
                     vTable = is.sTableArray[1];
                     is.uTable = vTable;
@@ -94,6 +99,10 @@ public class ViewOp {
                     pstmt =
                             conn.prepareStatement("create table " + is.sTableArray[0]
                                     + " (userinfo varchar (100) not null,name varchar(200) , type integer not null, ci varchar(88) not null, last_auth_dt varchar(14) constraint pk primary key (userinfo, type, ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE ");
+                    pstmt.executeUpdate();
+
+                    pstmt =
+                            conn.prepareStatement("create index ci_idx on "+is.sTableArray[0]+"(ci,type) include (name,userinfo) ");
                     pstmt.executeUpdate();
                     eTable = is.sTableArray[1];
                     vTable = is.sTableArray[0];
@@ -111,7 +120,7 @@ public class ViewOp {
                 if (rs != null) {
                     pstmt =
                             conn.prepareStatement("create table " + is.sTableArray[1]
-                                    + "  (mbrid varchar(100) not null, ci varchar(88) not null, mdn varchar(100), name varchar(100), last_auth_dt varchar(14) constraint pk primary key (mbrid,ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE");
+                                    + "  (mbrid varchar(100) , ci varchar(88) not null, mdn varchar(100), name varchar(100), last_auth_dt varchar(14) constraint pk primary key (ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE");
                     pstmt.executeUpdate();
                     eTable = is.sTableArray[0];
                     vTable = is.sTableArray[1];
@@ -119,7 +128,7 @@ public class ViewOp {
                 } else {
                     pstmt =
                             conn.prepareStatement("create table " + is.sTableArray[0]
-                                    + "  (mbrid varchar(100) not null, ci varchar(88) not null, mdn varchar(100), name varchar(100), last_auth_dt varchar(14) constraint pk primary key (mbrid,ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE");
+                                    + "  (mbrid varchar(100) , ci varchar(88) not null, mdn varchar(100), name varchar(100), last_auth_dt varchar(14) constraint pk primary key (ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE");
                     pstmt.executeUpdate();
                     eTable = is.sTableArray[1];
                     vTable = is.sTableArray[0];
