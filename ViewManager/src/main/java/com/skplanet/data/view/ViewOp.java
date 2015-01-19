@@ -17,8 +17,8 @@ public class ViewOp {
 
     private Logger logger = Logger.getLogger(getClass());
 
-    private String eTable = null;
-    private String vTable = null;
+    private String eraseTable = null;
+    private String insertTable = null;
 
     InitialSequence is = null;
 
@@ -30,7 +30,7 @@ public class ViewOp {
 
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(this.is.sConString);
+            conn = DriverManager.getConnection(this.is.ConString);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error(e);
@@ -45,11 +45,12 @@ public class ViewOp {
 
         try {
             conn = getConnection();
-            pstmt = conn.prepareStatement("select * from  " + vTable + " limit 1");
+            pstmt = conn.prepareStatement("select * from  " + insertTable + " limit 1");
             rs = pstmt.executeQuery();
-
-            pstmt = conn.prepareStatement("drop table " + vTable);
-            pstmt.executeUpdate();
+            if (rs!=null) {
+                pstmt = conn.prepareStatement("drop table " + insertTable);
+                pstmt.executeUpdate();
+            }
 
         } catch (SQLException e) {
             logger.error(e.getMessage());
@@ -73,8 +74,8 @@ public class ViewOp {
         try {
             conn = getConnection();
             File file = null;
-            if (is.sTable.equals("istore.userinfo")) {
-                pstmt = conn.prepareStatement("select * from " + is.sTableArray[0] + " limit 1");
+            if (is.viewTable.equals("istore.userinfo")) {
+                pstmt = conn.prepareStatement("select * from " + is.TableArray[0] + " limit 1");
                 try {
                     rs = pstmt.executeQuery();
                     rs.next();
@@ -83,33 +84,33 @@ public class ViewOp {
                 }
                 if (rs != null) {
                     pstmt =
-                            conn.prepareStatement("create table " + is.sTableArray[1]
+                            conn.prepareStatement("create table " + is.TableArray[1]
                                     + " (userinfo varchar (100) not null,name varchar(200) , type integer not null, ci varchar(88) not null, last_auth_dt varchar(14) constraint pk primary key (userinfo, type, ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE ");
                     pstmt.executeUpdate();
 
                     pstmt =
-                            conn.prepareStatement("create index ci_idx on "+is.sTableArray[1]+"(ci,type) include (name,userinfo) ");
+                            conn.prepareStatement("create index ci_idx0 on "+is.TableArray[1]+"(ci,type) include (name,userinfo) ");
                     pstmt.executeUpdate();
 
-                    eTable = is.sTableArray[0];
-                    vTable = is.sTableArray[1];
-                    is.uTable = vTable;
+                    eraseTable = is.TableArray[0];
+                    insertTable = is.TableArray[1];
+                    is.realTable = insertTable;
 
                 } else {
                     pstmt =
-                            conn.prepareStatement("create table " + is.sTableArray[0]
+                            conn.prepareStatement("create table " + is.TableArray[0]
                                     + " (userinfo varchar (100) not null,name varchar(200) , type integer not null, ci varchar(88) not null, last_auth_dt varchar(14) constraint pk primary key (userinfo, type, ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE ");
                     pstmt.executeUpdate();
 
                     pstmt =
-                            conn.prepareStatement("create index ci_idx on "+is.sTableArray[0]+"(ci,type) include (name,userinfo) ");
+                            conn.prepareStatement("create index ci_idx1 on "+is.TableArray[0]+"(ci,type) include (name,userinfo) ");
                     pstmt.executeUpdate();
-                    eTable = is.sTableArray[1];
-                    vTable = is.sTableArray[0];
-                    is.uTable = vTable;
+                    eraseTable = is.TableArray[1];
+                    insertTable = is.TableArray[0];
+                    is.realTable = insertTable;
                 }
             } else {
-                pstmt = conn.prepareStatement("select * from " + is.sTableArray[0] + " limit 1");
+                pstmt = conn.prepareStatement("select * from " + is.TableArray[0] + " limit 1");
                 logger.info(pstmt);
                 try {
                     rs = pstmt.executeQuery();
@@ -119,20 +120,20 @@ public class ViewOp {
                 }
                 if (rs != null) {
                     pstmt =
-                            conn.prepareStatement("create table " + is.sTableArray[1]
-                                    + "  (mbrid varchar(100) , ci varchar(88) not null, mdn varchar(100), name varchar(100), last_auth_dt varchar(14) constraint pk primary key (ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE");
+                            conn.prepareStatement("create table " + is.TableArray[1]
+                                    + "  (mbrid varchar(100)  , ci varchar(88) not null, mdn varchar(100), name varchar(100), last_auth_dt varchar(14) constraint pk primary key (ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE");
                     pstmt.executeUpdate();
-                    eTable = is.sTableArray[0];
-                    vTable = is.sTableArray[1];
-                    is.uTable = vTable;
+                    eraseTable = is.TableArray[0];
+                    insertTable = is.TableArray[1];
+                    is.realTable = insertTable;
                 } else {
                     pstmt =
-                            conn.prepareStatement("create table " + is.sTableArray[0]
+                            conn.prepareStatement("create table " + is.TableArray[0]
                                     + "  (mbrid varchar(100) , ci varchar(88) not null, mdn varchar(100), name varchar(100), last_auth_dt varchar(14) constraint pk primary key (ci)) SALT_BUCKETS=15,IMMUTABLE_ROWS=FALSE");
                     pstmt.executeUpdate();
-                    eTable = is.sTableArray[1];
-                    vTable = is.sTableArray[0];
-                    is.uTable = vTable;
+                    eraseTable = is.TableArray[1];
+                    insertTable = is.TableArray[0];
+                    is.realTable = insertTable;
                 }
             }
         } catch (SQLException e) {
@@ -159,27 +160,27 @@ public class ViewOp {
             conn = getConnection();
             File file = null;
 
-            pstmt = conn.prepareStatement("drop view " + is.sTable);
+            pstmt = conn.prepareStatement("drop view " + is.viewTable);
             try {
                 ret = pstmt.executeUpdate();
-                logger.info("View :" + eTable + " deleted");
+                logger.info("View :" + eraseTable + " deleted");
             } catch (SQLException e) {
                 logger.error(e.getMessage());
             }
 
             pstmt = conn.prepareStatement(
-                    "create view " + is.sTable + " as select * from " + vTable);
+                    "create view " + is.viewTable + " as select * from " + insertTable);
             try {
                 pstmt.executeUpdate();
-                logger.info("Table :" + vTable + " created ");
+                logger.info("Table :" + insertTable + " created ");
             } catch (SQLException e) {
                 logger.error(e.getMessage());
             }
 
-            pstmt = conn.prepareStatement("drop table " + eTable);
+            pstmt = conn.prepareStatement("drop table " + eraseTable);
             try {
                 ret = pstmt.executeUpdate();
-                logger.info("Table :" + eTable + " deleted");
+                logger.info("Table :" + eraseTable + " deleted");
             } catch (SQLException e) {
                 logger.error(e.getMessage());
             }

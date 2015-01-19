@@ -40,7 +40,7 @@ public class UploadThread implements Callable<int[]> {
 
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(is.sConString);
+            conn = DriverManager.getConnection(is.ConString);
         } catch (Exception e) {
             logger.error(e.getMessage());
         }
@@ -157,7 +157,7 @@ public class UploadThread implements Callable<int[]> {
             conn.setAutoCommit(false);
 
             File file = null;
-            pstmt = conn.prepareStatement(is.sQuery1 + " " + is.uTable + " " + is.sQuery2);
+            pstmt = conn.prepareStatement(is.query1 + " " + is.realTable + " " + is.query2);
 
             while ((file = (File) is.clq.poll()) != null) {
 
@@ -175,7 +175,7 @@ public class UploadThread implements Callable<int[]> {
 
                 for (String line = br.readLine(); line != null; line = br.readLine()) {
                     try {
-                        pstmt = codeGen(pstmt, is.sType, line);
+                        pstmt = codeGen(pstmt, is.typeArray, line);
                         pstmt.executeUpdate();
                         if (readLine[0] % 10000 == 9999)
                             conn.commit();
@@ -226,7 +226,7 @@ public class UploadThread implements Callable<int[]> {
         try {
             conn = getConnection();
             conn.setAutoCommit(false);
-            pstmt = conn.prepareStatement(is.sQuery1 + " " + is.uTable + " " + is.sQuery2);
+            pstmt = conn.prepareStatement(is.query1 + " " + is.realTable + " " + is.query2);
 
             while ((fss = (FileStatus) is.clq.poll()) != null) {
 
@@ -238,7 +238,7 @@ public class UploadThread implements Callable<int[]> {
 
                 for (String line = br.readLine(); line != null; line = br.readLine()) {
                     try {
-                        pstmt = codeGen(pstmt, is.sType, line);
+                        pstmt = codeGen(pstmt, is.typeArray, line);
                         pstmt.executeUpdate();
                         if (readLine[0] % 10000 == 9999)
                             conn.commit();

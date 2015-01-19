@@ -18,23 +18,23 @@ import org.apache.log4j.Logger;
  */
 public class InitialSequence {
     //    String sServerAddress = null;
-    public int nNumOfThread = 0;
-    String sLocation = null;
+    public int NumOfThread = 0;
+    String Location = null;
     public boolean bHdfs = false;
-    String sHdfsConf = null;
-    String sHdfsUrl = null;
-    String sDriver = null;
+    String HdfsConf = null;
+    String HdfsUrl = null;
+    String Driver = null;
     Properties prop = new Properties();
-    File[] sFile = null;
+    File[] fileArray = null;
     ConcurrentLinkedDeque clq = new ConcurrentLinkedDeque<Object>();
-    public String sConString = null;
-    String sQuery1 = null;
-    String sQuery2 = null;
-    Type[] sType = null;
+    public String ConString = null;
+    String query1 = null;
+    String query2 = null;
+    Type[] typeArray = null;
     String sDelimiter = null;
-    public String sTable = null;
-    public String uTable = null;
-    public String[] sTableArray = new String[2];
+    public String viewTable = null;
+    public String realTable = null;
+    public String[] TableArray = new String[2];
     public FileSystem fs = null;
     public Configuration conf = null;
     public boolean bStopByError = false;
@@ -79,26 +79,26 @@ public class InitialSequence {
         try {
             logger.info("load properties");
             prop.load(is);
-            nNumOfThread = Integer.parseInt(prop.getProperty("NumOfThread"));
-            sLocation = prop.getProperty("Location");
-            sHdfsConf = prop.getProperty("HdfsConf");
-            sDriver = prop.getProperty("Driver");
+            NumOfThread = Integer.parseInt(prop.getProperty("NumOfThread"));
+            Location = prop.getProperty("Location");
+            HdfsConf = prop.getProperty("HdfsConf");
+            Driver = prop.getProperty("Driver");
             bHdfs = Integer.parseInt(prop.getProperty("StorageType")) == 1 ? true : false;
-            sHdfsUrl = prop.getProperty("HdfsUrl");
-            sConString = prop.getProperty("ConString");
-            sQuery1 = prop.getProperty("Query1");
-            sQuery2 = prop.getProperty("Query2");
-            sTable = prop.getProperty("Table");
-            uTable = prop.getProperty("Table");
-            sTableArray[0] = prop.getProperty("Table") + "1";
-            sTableArray[1] = prop.getProperty("Table") + "2";
+            HdfsUrl = prop.getProperty("HdfsUrl");
+            ConString = prop.getProperty("ConString");
+            query1 = prop.getProperty("Query1");
+            query2 = prop.getProperty("Query2");
+            viewTable = prop.getProperty("Table");
+            realTable = prop.getProperty("Table");
+            TableArray[0] = prop.getProperty("Table") + "1";
+            TableArray[1] = prop.getProperty("Table") + "2";
             stk = new StringTokenizer(prop.getProperty("Type"), ",");
-            sType = new Type[stk.countTokens()];
+            typeArray = new Type[stk.countTokens()];
             bStopByError = Boolean.parseBoolean(prop.getProperty("ExitByError"));
 
             while (stk.hasMoreTokens()) {
                 temp = stk.nextToken();
-                sType[cnt] = Type.valueOf(temp);
+                typeArray[cnt] = Type.valueOf(temp);
                 cnt++;
             }
             sDelimiter = prop.getProperty("Delimiter");
@@ -112,7 +112,7 @@ public class InitialSequence {
 
     public void loadDriver() {
         try {
-            Class.forName(sDriver);
+            Class.forName(Driver);
         } catch (ClassNotFoundException e) {
             logger.error(e.getMessage());
             logger.error("Sequence: No suitable Driver class. Check Driver");
@@ -129,10 +129,10 @@ public class InitialSequence {
 
     public void loadLocalFile() {
         try {
-            File file = new File(sLocation);
+            File file = new File(Location);
             if (file.exists()) {
-                sFile = file.listFiles();
-                for (File temp : sFile) {
+                fileArray= file.listFiles();
+                for (File temp : fileArray) {
                     clq.add(temp);
                 }
             }
@@ -148,14 +148,14 @@ public class InitialSequence {
     public void loadHdfsFile() throws IOException {
         try {
             Configuration conf = new Configuration();
-            conf.addResource(new Path(sHdfsConf + "/hdfs-site.xml"));
-            conf.addResource(new Path(sHdfsConf + "/core-site.xml"));
+            conf.addResource(new Path(HdfsConf + "/hdfs-site.xml"));
+            conf.addResource(new Path(HdfsConf + "/core-site.xml"));
             conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
             conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
 
             this.conf = conf;
             this.fs = FileSystem.get(conf);
-            Path path = new Path(sLocation);
+            Path path = new Path(Location);
             FileStatus[] fsts = null;
 
             if (fs.exists(path)) {

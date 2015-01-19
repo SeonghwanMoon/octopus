@@ -32,13 +32,13 @@ public class ViewManager {
         is.loadParameter();
         is.loadDriver();
         ViewOp vo = new ViewOp(is);
-        vo.createView();
 
         try {
+            vo.createView();
             is.loadFile();
-            executor = Executors.newFixedThreadPool(is.nNumOfThread);
+            executor = Executors.newFixedThreadPool(is.NumOfThread);
             Callable<int[]> callable = new UploadThread(is);
-            for (int i = 0; i < is.nNumOfThread; i++) {
+            for (int i = 0; i < is.NumOfThread; i++) {
                 Future<int[]> future = executor.submit(callable);
                 list.add(future);
             }

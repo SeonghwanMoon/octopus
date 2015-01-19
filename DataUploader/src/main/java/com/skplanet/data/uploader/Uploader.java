@@ -37,13 +37,13 @@ public class Uploader {
         }
 
         try {
-            ExecutorService executor = Executors.newFixedThreadPool(is.nNumOfThread);
+            ExecutorService executor = Executors.newFixedThreadPool(is.NumOfThread);
 
             List<Future<int[]>> list = new ArrayList<Future<int[]>>();
 
             Callable<int[]> callable = new UploadThread(is);
 
-            for (int i = 0; i < is.nNumOfThread; i++) {
+            for (int i = 0; i < is.NumOfThread; i++) {
                 Future<int[]> future = executor.submit(callable);
                 list.add(future);
             }
